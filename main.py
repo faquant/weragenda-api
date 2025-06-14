@@ -28,7 +28,7 @@ async def enviar_frase(dados: FrasePayload):
         sheet = client.open_by_key(SPREADSHEET_ID).worksheet(SHEET_NAME)
 
         data = datetime.now().strftime("%Y-%m-%d %H:%M")
-        sheet.append_row([data, dados.horario, "Frase", f"{dados.bloco} → "{dados.frase}""])
+        sheet.append_row([data, dados.horario, "Frase", f'{dados.bloco} → "{dados.frase}"'])
 
         return {"status": "sucesso", "mensagem": "✅ Frase enviada para Google Sheets."}
 
