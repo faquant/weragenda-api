@@ -1,14 +1,13 @@
-
 from fastapi import FastAPI
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
 
 app = FastAPI()
 
-# Adiciona o middleware CORS para permitir requisições externas
+# CORS Middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -17,13 +16,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Modelo dos dados recebidos
 class DadosFrase(BaseModel):
     horario: str
     bloco: str
     frase: str
 
+# Endpoint principal
 @app.post("/enviar-frase")
-def receber_frase(dados: DadosFrase):
+def enviar_frase(dados: DadosFrase):
     scope = [
         "https://spreadsheets.google.com/feeds",
         "https://www.googleapis.com/auth/drive",
@@ -39,4 +40,10 @@ def receber_frase(dados: DadosFrase):
 
     data = datetime.now().strftime("%Y-%m-%d %H:%M")
     sheet.append_row([data, dados.horario, "Frase", f"{dados.bloco} → {dados.frase}"])
+
     return {"message": "Frase registrada com sucesso"}
+
+# ✅ Rota raiz adicionada corretamente
+@app.get("/")
+def root():
+    return {"status": "API WERAGENDA online"}
